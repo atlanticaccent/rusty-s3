@@ -1,6 +1,6 @@
 use std::{iter, str};
 
-use time::OffsetDateTime;
+use time::NaiveDateTime;
 use url::Url;
 
 use crate::sorting_iter::SortingIterator;
@@ -14,7 +14,7 @@ pub(crate) mod util;
 
 #[allow(clippy::too_many_arguments)]
 pub fn sign<'a, Q, H>(
-    date: &OffsetDateTime,
+    date: &NaiveDateTime,
     method: Method,
     mut url: Url,
     key: &str,
@@ -37,13 +37,13 @@ where
     let query_string = query_string.map(|(key, value)| (key, value));
     let headers = headers.map(|(key, value)| (key, value));
 
-    let yyyymmdd = date.format(&YYYYMMDD).expect("invalid format");
+    let yyyymmdd = date.format(&YYYYMMDD).to_string();
 
     let credential = format!(
         "{}/{}/{}/{}/{}",
         key, yyyymmdd, region, "s3", "aws4_request"
     );
-    let date_str = date.format(&ISO8601).expect("invalid format");
+    let date_str = date.format(&ISO8601).to_string();
     let expires_seconds_string = expires_seconds.to_string();
 
     let host = url.host_str().expect("host is known");
@@ -119,7 +119,7 @@ mod tests {
     use std::iter;
 
     use pretty_assertions::assert_eq;
-    use time::OffsetDateTime;
+    use time::NaiveDateTime;
 
     use super::Method;
     use super::*;
@@ -127,7 +127,7 @@ mod tests {
     #[test]
     fn aws_example() {
         // Fri, 24 May 2013 00:00:00 GMT
-        let date = OffsetDateTime::from_unix_timestamp(1369353600).unwrap();
+        let date = NaiveDateTime::from_timestamp(1369353600, 0);
 
         let method = Method::Get;
         let url = "https://examplebucket.s3.amazonaws.com/test.txt"
@@ -159,7 +159,7 @@ mod tests {
     #[test]
     fn aws_example_token() {
         // Fri, 24 May 2013 00:00:00 GMT
-        let date = OffsetDateTime::from_unix_timestamp(1369353600).unwrap();
+        let date = NaiveDateTime::from_timestamp(1369353600, 0);
 
         let method = Method::Get;
         let url = "https://examplebucket.s3.amazonaws.com/test.txt"
@@ -192,7 +192,7 @@ mod tests {
     #[test]
     fn aws_headers_example() {
         // Fri, 24 May 2013 00:00:00 GMT
-        let date = OffsetDateTime::from_unix_timestamp(1369353600).unwrap();
+        let date = NaiveDateTime::from_timestamp(1369353600, 0);
 
         let method = Method::Get;
         let url = "https://examplebucket.s3.amazonaws.com/test.txt"

@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use time::OffsetDateTime;
+use time::NaiveDateTime;
 use url::Url;
 
 use super::S3Action;
@@ -48,7 +48,7 @@ impl<'a> S3Action<'a> for GetObject<'a> {
         &mut self.headers
     }
 
-    fn sign_with_time(&self, expires_in: Duration, time: &OffsetDateTime) -> Url {
+    fn sign_with_time(&self, expires_in: Duration, time: &NaiveDateTime) -> Url {
         let url = self.bucket.object_url(self.object).unwrap();
 
         match self.credentials {
@@ -71,7 +71,7 @@ impl<'a> S3Action<'a> for GetObject<'a> {
 
 #[cfg(test)]
 mod tests {
-    use time::OffsetDateTime;
+    use time::NaiveDateTime;
 
     use pretty_assertions::assert_eq;
 
@@ -81,7 +81,7 @@ mod tests {
     #[test]
     fn aws_example() {
         // Fri, 24 May 2013 00:00:00 GMT
-        let date = OffsetDateTime::from_unix_timestamp(1369353600).unwrap();
+        let date = NaiveDateTime::from_timestamp(1369353600, 0);
         let expires_in = Duration::from_secs(86400);
 
         let endpoint = "https://s3.amazonaws.com".parse().unwrap();
@@ -108,7 +108,7 @@ mod tests {
     #[test]
     fn aws_example_custom_query() {
         // Fri, 24 May 2013 00:00:00 GMT
-        let date = OffsetDateTime::from_unix_timestamp(1369353600).unwrap();
+        let date = NaiveDateTime::from_timestamp(1369353600, 0);
         let expires_in = Duration::from_secs(86400);
 
         let endpoint = "https://s3.amazonaws.com".parse().unwrap();

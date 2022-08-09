@@ -1,9 +1,6 @@
-use time::format_description::FormatItem;
-use time::macros::format_description;
-
-pub const ISO8601: &[FormatItem<'static>] =
-    format_description!("[year][month][day]T[hour][minute][second]Z");
+pub const ISO8601: &str =
+    "%Y%m%dT%H%M%SZ";
 #[cfg(feature = "full")]
-pub const ISO8601_EXT: &[FormatItem<'static>] =
-    format_description!("[year]-[month]-[day]T[hour]:[minute]:[second]Z");
-pub const YYYYMMDD: &[FormatItem<'static>] = format_description!("[year][month][day]");
+pub const ISO8601_EXT: &str =
+    "%Y-%m-%dT%H:%M:%SZ";
+pub const YYYYMMDD: &str = "%Y%m%d";
